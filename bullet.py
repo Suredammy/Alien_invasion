@@ -8,7 +8,7 @@ class Bullet(Sprite):
     def __init__(self, ai_game):
         """Create a bullet object at the ship's current position."""
         super().__init__()
-        self.screen = ai_game.screen_height
+        self.screen = ai_game.screen
         self.settings = ai_game.settings
         self.color = self.settings.bullet_color
 
@@ -23,7 +23,7 @@ class Bullet(Sprite):
 
 
     def update(self):
-        """Move the bullet up the screen."""
+        """Move the bullet automatically up the screen."""
         #Update the decimal position of the bullet.
         self.y -= self.settings.bullet_speed
         #Update the rect position.
