@@ -75,14 +75,25 @@ class AlienInvasion:
                 self._update_aliens()
             self._update_screen()
 
+    def _get_high_score(self):
+        with open("high_score.txt", "r") as hs:
+            highest_score = hs.readlines()[0]
+            highest_score = int(highest_score)
+        if highest_score < self.stats.high_score:
+            f = open("high_score.txt", "w")
+            f.write(str(self.stats.high_score))
+            f.close()
+        
+                
     def _check_events(self):
         """Respond to keypresses and mouse events."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self._get_high_score()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
-
+ 
                 # Move the ship to the right.
                 self.ship.rect.x += 1
 
@@ -145,6 +156,7 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
+            self._get_high_score()
             sys.exit()
 
         elif event.key == pygame.K_SPACE:
@@ -253,6 +265,7 @@ class AlienInvasion:
         If there is hit, get rid of the bullet and the alien."""
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
         if collisions:
+            
             for aliens in collisions.values():
 
                 self.stats.score += self.settings.alien_points * len(aliens)
