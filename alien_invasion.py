@@ -48,9 +48,9 @@ class AlienInvasion:
 
         # Set the background color.
         self.bg_color = (248, 10, 75)
-        
+
         self.play_button = Button(self, "Start playing at level 1", 1)
-        #Set different playing levels.
+        # Set different playing levels.
         self.play_button_2 = Button(self, "Start playing at level 2", 2)
         self.play_button_3 = Button(self, "Start playing at level 3", 3)
 
@@ -92,6 +92,8 @@ class AlienInvasion:
                     self.ship.moving_right = False
                 elif event.key == pygame.K_LEFT:
                     self.ship.moving_left = False
+                    
+
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
@@ -104,12 +106,18 @@ class AlienInvasion:
         button_clicked_3 = self.play_button_3.rect.collidepoint(mouse_pos)
         if button_clicked:
             self._start_game(1)
+
         elif button_clicked_2:
+            self.stats.level += 1
             self._start_game(2)
+
         elif button_clicked_3:
+            self.stats.level += 2
             self._start_game(3)
         self.sb.prep_score()
         self.sb.prep_level()
+        self.sb.prep_ships()
+
 
     def _start_game(self, play_level):
         if not self.stats.game_active:
@@ -118,7 +126,7 @@ class AlienInvasion:
             # Reset the game statistics.
             self.stats.reset_stats()
             self.stats.game_active = True
-            self.sb.prep_score() # Reset the score
+            self.sb.prep_score()  # Reset the score
             # Get rid of any remaining aliens and bullets.
             self.aliens.empty()
             self.bullets.empty()
@@ -131,7 +139,7 @@ class AlienInvasion:
     def _check_keydown_events(self, event):
         """Respond to key presses"""
         if event.key == pygame.K_p:
-            self._start_game()
+            self._start_game(1)
         elif event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
@@ -172,7 +180,7 @@ class AlienInvasion:
             self.settings.screen_height - (3 * alien_height) - ship_height
         )
 
-        number_rows = available_space_y // (2 * alien_height)
+        number_rows = int(available_space_y // (2.2 * alien_height))
 
         # Create the full fleet of aliens.
         for row in range(number_rows):
@@ -181,13 +189,12 @@ class AlienInvasion:
 
     def _create_alien(self, alien_number, row_number):
         """Create an alien and place it in a row."""
-        rand_num = randint(-60, 60)
-        rand_num_2 = randint(-40, 40)
+       
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
-        alien.x =  alien_width + 2 * alien_width * alien_number
+        alien.x = alien_width + 2 * alien_width * alien_number
         alien.rect.x = alien.x
-        alien.rect.y = alien.rect.height + (2 * alien.rect.height * row_number)
+        alien.rect.y = alien.rect.height + 15 + (2 * alien.rect.height * row_number)
         self.aliens.add(alien)
 
     def _check_fleet_edges(self):
@@ -221,24 +228,25 @@ class AlienInvasion:
         self.label = self.myfont15.render(
             "Avoid The Aliens and Shoot to kill them", 1, (255, 0, 0)
         )
-        self.screen.blit(self.label, (20, 650))
+        self.screen.blit(self.label, (20,  0))
 
     def _update_bullets(self):
         """Updates the position of bullets and get rid of old bullets"""
         # Update bullets positions.
-        self.bullets.update()  
+        self.bullets.update()
 
         # Get rid of bullets that have disappeared.
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
-                self.stats.score += self.settings.bullet_points #Remove point for a bullet that miss aliens.
+                self.stats.score += (
+                    self.settings.bullet_points
+                )  # Remove point for a bullet that miss aliens.
                 self.sb.prep_score()
                 self.bullets.remove(bullet)
 
         # Check for any bullets that have hit aliens.
         # If there is hit, get rid of the bullet and the alien.
         self._check_bullet_alien_collisions()
-        
 
     def _check_bullet_alien_collisions(self):
         """Check for any bullets that have hit aliens.
@@ -257,7 +265,7 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
-            #Increase level.
+            # Increase level.
             self.stats.level += 1
             self.sb.prep_level()
 
@@ -275,7 +283,7 @@ class AlienInvasion:
         if self.stats.ships_left > 0:
             # Decrease the ships left.
             self.stats.ships_left -= 1
-
+            self.sb.prep_ships()
             # Get rid of any remaining aliens and bullets
             self.aliens.empty()
             self.bullets.empty()

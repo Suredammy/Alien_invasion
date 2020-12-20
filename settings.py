@@ -18,23 +18,24 @@ class Settings:
 
         # Bullet settings
         
-        self.bullet_width = 3
-        self.bullet_height = 15
+        self.bullet_width = 2
+        self.bullet_height = 8
         self.bullet_color = (20, 25, 28)
         #self.bullet_allowed = 10
 
         # Alien settings
         
-        self.fleet_drop_speed = 1
+        
 
         #How quickly the game speeds up
-        self.speedup_scale = 1.1
+        self.speedup_scale = 1.3
         self.score_scale = 1.5
         self.initialize_dynamic_settings(self.play_level)
 
     def initialize_dynamic_settings(self, play_level):
         self.play_level = play_level
         self.play_speed = self.speedup_scale ** (play_level -1)
+        self.fleet_drop_speed = 1 * self.play_speed
         self.ship_speed = 2 * self.play_speed
         self.bullet_speed = 2 * self.play_speed
         self.alien_speed = 2 * self.play_speed
@@ -61,7 +62,8 @@ class Settings:
         self.ship_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
-        self.bullet_allowed += 3
+        self.fleet_drop_speed *= self.speedup_scale
+        self.bullet_allowed += 1
     
 
 
